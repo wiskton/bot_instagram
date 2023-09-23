@@ -3,57 +3,90 @@ import keyboard
 import time
 import csv
 import os
+import pyautogui
+from dotenv import load_dotenv
+from pathlib import Path
+
+
+dotenv_path = Path('.env')
+load_dotenv(dotenv_path=dotenv_path)
 
 
 # utilize a extensão - IG Tools - IG Follower Export Tool
-# export todos seguidores 
+# export todos seguidores
 
-# quanto tempo espera para seguir o próximo
-FOLLOW_TIME = 30
-REMOVE_PROFILES = []
-NEW_DICT = []
-
-# open edge
-os.startfile("msedge")
-time.sleep(2)
+USER = os.getenv('USER')
+PASSWORD = os.getenv('PASSWORD')
+FOLLOW_TIME = os.getenv('FOLLOW_TIME')
 
 
-with open('profiles.csv', newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    for row in reader:
-        # clica na barra de endereço do navegador
-        mouse.move(600, 50, absolute=True, duration=0.1)
-        mouse.click('left')
-        time.sleep(1)
+def browser():
+    # open edge
+    os.startfile("C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
+    time.sleep(5)
 
-        # acessar o novo profile
-        keyboard.write(row['profileUrl'])
+    '''
+    img = pyautogui.locateCenterOnScreen("imgs/link.jpg", confidence=0.7)
+    if not img:
+        pyautogui.click(img.x, img.y)
+    '''
+    keyboard.write('https://instagram.com')
+    keyboard.press("enter")
+
+    time.sleep(5)
+
+
+def login():
+    try:
+        img = pyautogui.locateCenterOnScreen("imgs/user.jpg", confidence=0.7)
+        pyautogui.click(img.x, img.y)
+        keyboard.write(USER)
         keyboard.press("enter")
+    except:
+        print("Não encontrou o campo de usuário.")
 
-        # aguarde 5 segundos
-        time.sleep(5)
+    try:
+        img = pyautogui.locateCenterOnScreen("imgs/password.jpg", confidence=0.7)
+        pyautogui.click(img.x, img.y)
+        keyboard.write(PASSWORD)
+        keyboard.press("enter")
+    except:
+        print("Não encontrou o campo de senha.")
 
-        # clica para seguir a pessoa
-        mouse.move(1120, 130, absolute=True, duration=0.1)
-        mouse.click('left')
+    try:
+        img = pyautogui.locateCenterOnScreen("imgs/login.jpg", confidence=0.7)
+        pyautogui.click(img.x, img.y)
+    except:
+        print("Não encontrou o campo de login.")
 
-        # # gera um novo dicionário sem as pessoas que acabou de seguir
-        # REMOVE_PROFILES.append(row['profileUrl'])
-        # for row2 in reader:
-        #     if row2['profileUrl'] not in REMOVE_PROFILES:
-        #         NEW_DICT.append({
-        #             'id': "",
-        #             'userName': "",
-        #             'fullName': "",
-        #             'profileUrl': row2['profileUrl'],
-        #             'avatarUrl': "",
-        #             'isVerified': "",
-        #         })
-            
-        # # cria um novo csv sem as pessoas que já seguiu
-        # with open('profiles2.csv', 'w', newline='') as csvfile:
-        #     fieldnames = ['id', 'userName', 'fullName', 'profileUrl', 'avatarUrl', 'isVerified']
-        #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        #     writer.writerows(NEW_DICT) 
+def follow():
+    with open("profiles.csv", newline="", encoding="utf8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            # clica na barra de endereço do navegador
+            try:
+                img = pyautogui.locateCenterOnScreen("imgs/link.jpg", confidence=0.8)
+                pyautogui.click(img.x, img.y)
 
-        time.sleep(FOLLOW_TIME)
+                # acessar o novo profile
+                keyboard.write(row["profileUrl"])
+                keyboard.press("enter")
+
+                time.sleep(5)
+            except:
+                print("Não encontrou a barra de endereço do navegador.")
+
+            # clica para seguir a pessoa
+            try:
+                img = pyautogui.locateCenterOnScreen("imgs/follow.jpg", confidence=0.9)
+                pyautogui.click(img.x, img.y)
+
+                time.sleep(FOLLOW_TIME)
+            except:
+                print("Você já segue a pessoa.")
+
+
+if __name__ == "__main__":
+    browser()
+    login()
+    follow()

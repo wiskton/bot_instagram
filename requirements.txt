@@ -1,0 +1,5 @@
+mouse
+keyboard
+pyautogui
+opencv-python
+python-dotenv

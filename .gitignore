@@ -1,0 +1,7 @@
+keyboard
+mouse
+pyautogui
+venv
+profiles.csv
+*.pyc
+.idea
