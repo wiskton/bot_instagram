@@ -12,12 +12,10 @@ dotenv_path = Path('.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 
-# utilize a extensão - IG Tools - IG Follower Export Tool
-# export todos seguidores
-
 USER = os.getenv('USER')
 PASSWORD = os.getenv('PASSWORD')
 FOLLOW_TIME = os.getenv('FOLLOW_TIME')
+PERFIL = 'https://instagram.com/wiskton'
 
 
 def browser():
@@ -25,11 +23,6 @@ def browser():
     os.startfile("C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
     time.sleep(5)
 
-    '''
-    img = pyautogui.locateCenterOnScreen("imgs/link.jpg", confidence=0.7)
-    if not img:
-        pyautogui.click(img.x, img.y)
-    '''
     keyboard.write('https://instagram.com')
     keyboard.press("enter")
 
@@ -59,34 +52,39 @@ def login():
     except:
         print("Não encontrou o campo de login.")
 
-def follow():
-    with open("profiles.csv", newline="", encoding="utf8") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            # clica na barra de endereço do navegador
-            try:
-                img = pyautogui.locateCenterOnScreen("imgs/link.jpg", confidence=0.8)
-                pyautogui.click(img.x, img.y)
 
-                # acessar o novo profile
-                keyboard.write(row["profileUrl"])
-                keyboard.press("enter")
+def open_profile():
+    img = pyautogui.locateCenterOnScreen("imgs/link.jpg", confidence=0.8)
+    pyautogui.click(img.x, img.y)
 
-                time.sleep(5)
-            except:
-                print("Não encontrou a barra de endereço do navegador.")
+    keyboard.write(PERFIL)
+    keyboard.press("enter")
 
-            # clica para seguir a pessoa
-            try:
-                img = pyautogui.locateCenterOnScreen("imgs/follow.jpg", confidence=0.9)
-                pyautogui.click(img.x, img.y)
+    time.sleep(5)
 
-                time.sleep(FOLLOW_TIME)
-            except:
-                print("Você já segue a pessoa.")
+    img = pyautogui.locateCenterOnScreen("imgs/following.jpg", confidence=0.9)
+    pyautogui.click(img.x, img.y)
+
+    time.sleep(5)
+
+
+def copy_followers():
+    try:
+        img = pyautogui.locateCenterOnScreen("imgs/follow.jpg", confidence=0.9)
+        pyautogui.click(img.x, img.y)
+
+        time.sleep(5)
+    except:
+        img = pyautogui.locateCenterOnScreen("imgs/seta.jpg", confidence=0.9)
+        for x in range(0, 2):
+            pyautogui.click(img.x, img.y)
+
+        time.sleep(2)
 
 
 if __name__ == "__main__":
     browser()
     login()
-    follow()
+    open_profile()
+    while True:
+        copy_followers()
